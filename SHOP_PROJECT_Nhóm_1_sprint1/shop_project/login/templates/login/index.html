@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home Test Page</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f0f2f5;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify_content: center;
+        }
+        .menu-card {
+            max-width: 500px;
+            width: 100%;
+            border-radius: 15px;
+        }
+        .btn-custom {
+            margin-bottom: 10px;
+            padding: 15px;
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container d-flex justify-content-center">
+        <div class="card shadow-lg menu-card p-4">
+            <h2 class="text-center mb-4 text-primary fw-bold">MENU TEST</h2>
+
+            <div class="d-grid gap-2">
+                
+                <a href="{% url 'products' %}" class="btn btn-primary btn-custom shadow-sm">
+                    <i class="fa-solid fa-shop"></i> 📦 Xem Danh Sách Sản Phẩm
+                </a>
+
+                <hr>
+
+                {% if user.is_authenticated %}
+                    
+                    <div class="alert alert-success text-center mb-3">
+                        Xin chào, <strong>{{ user.username }}</strong>!
+                    </div>
+
+                    <a href="{% url 'profile' %}" class="btn btn-info text-white btn-custom shadow-sm">
+                        👤 Trang Cá Nhân (Profile)
+                    </a>
+
+                    <a href="{% url 'cart' %}" class="btn btn-warning text-dark btn-custom shadow-sm">
+                        🛒 Giỏ Hàng Của Tôi
+                    </a>
+
+                    <a href="{% url 'logout' %}" class="btn btn-outline-danger btn-custom mt-2">
+                        🚪 Đăng Xuất
+                    </a>
+
+                {% else %}
+
+                    <div class="alert alert-secondary text-center mb-3">
+                        Bạn đang là khách vãng lai.
+                    </div>
+
+                    <a href="{% url 'login' %}" class="btn btn-success btn-custom shadow-sm">
+                        🔑 Đăng Nhập
+                    </a>
+
+                    <button class="btn btn-secondary btn-custom shadow-sm" disabled>
+                        🛒 Giỏ Hàng (Cần Login)
+                    </button>
+
+                {% endif %}
+                
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
