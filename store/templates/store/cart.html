@@ -1,0 +1,352 @@
+{% load static %}
+{% load humanize %}
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Giỏ hàng | GIA DUNG VN</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body { background: #f8f9fa; font-family: 'Segoe UI', sans-serif; padding-top: 100px; }
+    .navbar-glass { 
+        background: rgba(255, 255, 255, 0.95); 
+        backdrop-filter: blur(10px); 
+        box-shadow: 0 4px 30px rgba(0, 0, 0, 0.05); 
+        border-bottom: 1px solid rgba(255, 255, 255, 0.3); 
+    }
+    .nav-link { 
+        font-weight: 600; 
+        color: #555 !important; 
+        transition: 0.3s; 
+    }
+    .nav-link:hover, .nav-link.active { 
+        color: #008c95 !important; 
+    }
+    .search-box { position: relative; max-width: 300px; width: 100%; }
+    .search-box input { 
+        border-radius: 50px; 
+        padding-left: 20px; 
+        padding-right: 45px; 
+        border: 1px solid #ddd; 
+        transition: all 0.3s;
+    }
+    .search-box input:focus { 
+        border-color: #008c95; 
+        box-shadow: 0 0 0 0.2rem rgba(0, 140, 149, 0.1); 
+    }
+    .search-box button { 
+        position: absolute; 
+        right: 5px; 
+        top: 50%; 
+        transform: translateY(-50%); 
+        border: none; 
+        background: none; 
+        color: #008c95; 
+        padding: 5px 10px; 
+    }
+        .cart-card { background: white; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.05); overflow: hidden; }
+        .table thead th { background: #f1f2f6; color: #555; font-weight: 600; border: none; padding: 15px; }
+        .product-img { width: 80px; height: 80px; object-fit: cover; border-radius: 10px; border: 1px solid #eee; }
+        .btn-qty { border: 1px solid #ddd; background: white; width: 30px; height: 30px; line-height: 28px; padding: 0; text-align: center; border-radius: 5px; color: #555; }
+        .btn-qty:hover { background: #f1f2f6; color: #008c95; }
+        .total-price { font-size: 1.5rem; font-weight: 800; color: #d32f2f; }
+        
+        .custom-checkbox { width: 20px; height: 20px; cursor: pointer; accent-color: #008c95; }
+        .btn-cskh {
+			background-color: #008c95;
+			color: white;
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			
+			height: 60px;
+			min-width: 60px;
+			border-radius: 60px;
+			padding: 0;
+			
+			font-weight: 700;
+			font-size: 1.4rem;
+			transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+			border: 2px solid white;
+			overflow: hidden;
+		}
+
+		.icon-cskh {
+			transition: transform 0.3s ease;
+            flex-shrink: 0; 
+		}
+
+		.text-cskh {
+			max-width: 0;
+			opacity: 0;
+			white-space: nowrap;
+			overflow: hidden;
+			transition: all 0.4s ease;
+			font-size: 1.1rem;
+		}
+
+		.btn-cskh:hover {
+			background-color: #007982;
+
+			width: auto;
+			padding-left: 20px;  
+			padding-right: 30px; 
+			
+			box-shadow: 0 5px 15px rgba(0, 140, 149, 0.4);
+			transform: translateY(-3px);
+            justify-content: flex-start; 
+		}
+
+		.btn-cskh:hover .text-cskh {
+			max-width: 250px;
+			opacity: 1;
+			margin-left: 15px; 
+		}
+
+		.btn-cskh:hover .icon-cskh {
+			transform: scale(1.1);
+        }
+    </style>
+</head>
+<body>
+    
+<nav class="navbar navbar-expand-lg navbar-glass fixed-top py-2">
+		<div class="container">
+			<a class="navbar-brand fw-bold text-uppercase" href="{% url 'home' %}" style="color: #008c95; font-size: 1.4rem;">
+				<i class="fas fa-shopping-bag me-2"></i>GIADUNG.VN
+			</a>
+			
+			<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+				<span class="navbar-toggler-icon"></span>
+			</button>
+
+			<div class="collapse navbar-collapse" id="navbarNav">
+				<form action="{% url 'search' %}" method="GET" class="search-box mx-auto my-2 my-lg-0">
+					<input type="text" name="q" class="form-control" placeholder="Tìm sản phẩm..." aria-label="Search" value="{{ request.GET.q }}">
+					<button type="submit"><i class="fas fa-search"></i></button>
+				</form>
+
+				<ul class="navbar-nav align-items-center gap-2">
+					<li class="nav-item"><a class="nav-link" href="{% url 'home' %}">Trang chủ</a></li>
+					
+					<li class="nav-item">
+						<a class="nav-link position-relative" href="{% url 'cart' %}">
+							<i class="fas fa-shopping-cart"></i> Giỏ
+						</a>
+					</li>
+					
+					{% if user.is_authenticated %}
+						<li class="nav-item dropdown">
+							<a class="nav-link dropdown-toggle btn btn-light rounded-pill px-3 shadow-sm" href="#" data-bs-toggle="dropdown">
+								<i class="fas fa-user-circle me-1" style="color: #008c95;"></i> 
+								
+								{% if user.profile.display_name %}
+									{{ user.profile.display_name }}
+								{% elif user.profile.full_name %}
+									{{ user.profile.full_name }}
+								{% else %}
+									{{ user.username }}
+								{% endif %}
+							</a>
+							<ul class="dropdown-menu dropdown-menu-end border-0 shadow mt-2" style="border-radius: 15px;">
+								<li><a class="dropdown-item py-2" href="{% url 'profile' %}"><i class="fas fa-id-card me-2 text-muted"></i>Hồ sơ</a></li>
+								<li><a class="dropdown-item py-2" href="{% url 'order-history' %}"><i class="fas fa-box-open me-2 text-muted"></i>Quản lý đơn hàng</a></li>
+								<li><hr class="dropdown-divider"></li>
+								<li><a class="dropdown-item py-2 text-danger" href="{% url 'logout' %}"><i class="fas fa-sign-out-alt me-2"></i>Đăng xuất</a></li>
+							</ul>
+						</li>
+					{% else %}
+						<li class="nav-item"><a class="btn btn-outline-dark rounded-pill px-4" href="{% url 'login' %}">Đăng nhập</a></li>
+					{% endif %}
+				</ul>
+			</div>
+		</div>
+	</nav>
+
+	{% if messages %}
+	<div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 1100;">
+		{% for message in messages %}
+		<div class="toast align-items-center text-white bg-success border-0 show" role="alert" aria-live="assertive" aria-atomic="true">
+			<div class="d-flex">
+				<div class="toast-body">
+					<i class="fas fa-check-circle me-2"></i> {{ message }}
+				</div>
+				<button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+			</div>
+		</div>
+		{% endfor %}
+	</div>
+	<script>
+		document.addEventListener('DOMContentLoaded', function () {
+			var toastElList = [].slice.call(document.querySelectorAll('.toast'))
+			var toastList = toastElList.map(function (toastEl) {
+				return new bootstrap.Toast(toastEl, { delay: 3000 });
+			});
+			toastList.forEach(toast => toast.show());
+		});
+	</script>
+	{% endif %}
+
+    <div class="container pb-5">
+        <h3 class="fw-bold mb-4 text-secondary"><i class="fas fa-shopping-cart me-2"></i>GIỎ HÀNG CỦA BẠN</h3>
+
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="cart-card">
+                    {% if cart_items %}
+                    <div class="table-responsive">
+                        <table class="table align-middle mb-0">
+                            <thead>
+                                <tr>
+                                    <th class="text-center" style="width: 50px;">
+                                        <input type="checkbox" class="custom-checkbox" id="selectAll" onclick="toggleSelectAll()">
+                                    </th>
+                                    <th>Sản phẩm</th>
+                                    <th class="text-center">Đơn giá</th>
+                                    <th class="text-center">Số lượng</th>
+                                    <th class="text-center">Thành tiền</th>
+                                    <th class="text-center">Xóa</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in cart_items %}
+                                <tr>
+                                    <td class="text-center">
+                                        <input type="checkbox" class="custom-checkbox item-checkbox" 
+                                               value="{{ item.id }}" 
+                                               data-price="{{ item.total_price }}"
+                                               onchange="calculateTotal()">
+                                    </td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            {% if item.product.image %}
+                                                <img src="{{ item.product.image.url }}" class="product-img me-3">
+                                            {% else %}
+                                                <img src="{% static 'store/images/no-image.png' %}" class="product-img me-3">
+                                            {% endif %}
+                                            <div>
+                                                <h6 class="mb-1 fw-bold">{{ item.product.name }}</h6>
+                                                <small class="text-muted">{{ item.product.category }}</small>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="text-center">
+                                        {% if item.product.is_on_sale %}
+                                            <div class="text-danger fw-bold">{{ item.product.current_price|intcomma }}₫</div>
+                                            <small class="text-decoration-line-through text-muted">{{ item.product.price|intcomma }}₫</small>
+                                        {% else %}
+                                            <div class="fw-bold">{{ item.product.price|intcomma }}₫</div>
+                                        {% endif %}
+                                    </td>
+                                    <td class="text-center">
+                                        <div class="d-flex justify-content-center align-items-center gap-2">
+                                            <a href="{% url 'update-cart' item.id 'decrease' %}" class="btn-qty"><i class="fas fa-minus small"></i></a>
+                                            <span class="fw-bold">{{ item.quantity }}</span>
+                                            <a href="{% url 'update-cart' item.id 'increase' %}" class="btn-qty"><i class="fas fa-plus small"></i></a>
+                                        </div>
+                                    </td>
+                                    <td class="text-center fw-bold text-primary">
+                                        {{ item.total_price|intcomma }}₫
+                                    </td>
+                                    <td class="text-center">
+                                        <a href="{% url 'remove-from-cart' item.id %}" class="text-danger" onclick="return confirm('Xóa sản phẩm này?')">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="text-center py-5">
+                        <img src="https://cdni.iconscout.com/illustration/premium/thumb/empty-cart-2130356-1800917.png" width="200">
+                        <h4 class="text-muted mt-3">Giỏ hàng trống trơn!</h4>
+                        <a href="{% url 'home' %}" class="btn btn-primary rounded-pill mt-3">Đi mua sắm ngay</a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="col-lg-4 mt-4 mt-lg-0">
+                <div class="cart-card p-4">
+                    <h5 class="fw-bold mb-3">Tạm tính</h5>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="text-muted">Đã chọn:</span>
+                        <span class="fw-bold" id="selectedCount">0 sản phẩm</span>
+                    </div>
+                    <hr>
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <span class="fw-bold fs-5">Tổng cộng:</span>
+                        <span class="total-price" id="displayTotal">0₫</span>
+                    </div>
+                    
+                    <button onclick="goToCheckout()" class="btn btn-success w-100 py-3 rounded-pill fw-bold shadow">
+                        MUA HÀNG NGAY <i class="fas fa-arrow-right ms-2"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+	<div class="fixed-bottom p-4" style="z-index: 1000; pointer-events: none">
+	    <div class="text-end" style="pointer-events: auto">
+	        <a href="{% url 'customer_support' %}" class="btn-cskh shadow-lg text-decoration-none">
+	            <i class="fas fa-headset icon-cskh"></i>
+	            <span class="text-cskh">Liên hệ chúng tôi</span>
+	        </a>
+ 	   </div>
+	</div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function toggleSelectAll() {
+            let selectAllBox = document.getElementById('selectAll');
+            let checkboxes = document.querySelectorAll('.item-checkbox');
+            
+            checkboxes.forEach(cb => {
+                cb.checked = selectAllBox.checked;
+            });
+            calculateTotal();
+        }
+
+        function calculateTotal() {
+            let checkboxes = document.querySelectorAll('.item-checkbox');
+            let total = 0;
+            let count = 0;
+            
+            let allChecked = true;
+
+            checkboxes.forEach(cb => {
+                if (cb.checked) {
+                    total += parseFloat(cb.getAttribute('data-price'));
+                    count++;
+                } else {
+                    allChecked = false;
+                }
+            });
+
+            document.getElementById('selectAll').checked = (count > 0 && allChecked);
+            document.getElementById('selectedCount').innerText = count + " sản phẩm";
+            document.getElementById('displayTotal').innerText = total.toLocaleString('vi-VN') + "₫";
+        }
+
+        function goToCheckout() {
+            let checkboxes = document.querySelectorAll('.item-checkbox:checked');
+            if (checkboxes.length === 0) {
+                alert("Bạn chưa chọn sản phẩm nào để mua!");
+                return;
+            }
+
+            let selectedIds = [];
+            checkboxes.forEach(cb => {
+                selectedIds.push(cb.value);
+            });
+
+            window.location.href = "{% url 'checkout' %}?items=" + selectedIds.join(',');
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,260 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f5f5f5;
+}
+
+/* Voucher Bar */
+.voucher-bar {
+  background-color: #8b0000;
+  color: white;
+  text-align: center;
+  padding: 8px 15px;
+  font-size: 24px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 70px;
+}
+
+/* Header */
+#header {
+  position: relative;
+  top: 0;
+  z-index: 1;
+  background-color: rgb(96, 189, 231);
+  width: 100%;
+  transition: all 0.3s ease;
+}
+#header.fixed {
+  position: fixed;
+  top: 0;
+  left: 0;
+  animation: slideDown 0.3s ease;
+}
+@keyframes slideDown {
+  from {
+    transform: translateY(-100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+#header .navi {
+  padding: 0 65px;
+  height: 70px;
+  display: inline-block;
+}
+.navi .logo {
+  font-size: 24px;
+  color: #8b0000;
+}
+.navi .home {
+  margin-left: 90px;
+}
+#header .navi > ul > li {
+  display: inline-block;
+  position: relative;
+}
+
+.navi > ul > li > a {
+  color: black;
+  font-size: 18px;
+  text-decoration: none;
+}
+
+.navi li a {
+  display: block;
+  line-height: 70px;
+  padding: 0 24px;
+}
+
+.navi ul > li:hover > a {
+  background-color: rgba(255, 255, 255, 0.452);
+}
+
+.input-box {
+  display: inline-flex;
+  align-items: center;
+  background-color: white;
+  border-radius: 30px;
+  padding: 6px 14px;
+}
+.input-box input {
+  width: 400px;
+  height: 25px;
+  border: none;
+  outline: none;
+  font-size: 18px;
+  margin-left: 8px;
+}
+/*Main*/
+#main {
+  margin: 20px;
+  background-color: rgba(141, 158, 141, 0.692);
+  padding: 40px;
+  border-radius: 10px;
+  display: flex;
+  gap: 80px;
+  align-items: flex-start;
+}
+
+/* Ảnh sản phẩm */
+#main img {
+  width: 340px;
+  height: auto;
+  border-radius: 8px;
+  background: white;
+  padding: 10px;
+}
+
+/* Thông tin bên phải */
+#main .thong_tin {
+  flex: 1;
+  font-size: 16px;
+  line-height: 1.6;
+  padding-right: 80px;
+}
+#main .thong_tin ul {
+  margin-left: 20px;
+}
+
+/* Khung số lượng */
+.quantity-box {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid #333;
+  margin-top: 10px;
+}
+
+.quantity-box button {
+  width: 35px;
+  height: 35px;
+  border: none;
+  background: white;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+.quantity-box span {
+  width: 40px;
+  text-align: center;
+  font-size: 16px;
+  border-left: 1px solid #333;
+  border-right: 1px solid #333;
+  background-color: #fff;
+}
+
+.quantity-box button {
+  background-color: #fff;
+}
+.quantity-box {
+  background-color: #fff;
+}
+
+.quantity-box span {
+  background-color: #fff;
+}
+
+.quantity {
+  display: flex;
+  align-items: center;
+}
+
+.quantity-label {
+  margin: 0 12px 0 0;
+}
+
+.quantity-box {
+  background-color: #fff;
+}
+
+.quantity-btn {
+  cursor: pointer;
+}
+
+.btn-add-cart {
+  margin-top: 20px;
+  padding: 12px 24px;
+  background-color: #d32f2f;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.btn-add-cart:hover {
+  background-color: #b71c1c;
+}
+
+/* Footer */
+footer {
+  background-color: #008b8b;
+  color: white;
+  padding: 40px 0 20px 120px;
+  height: 300px;
+}
+
+.footer-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 15px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 40px;
+}
+
+.footer-column h3 {
+  font-size: 28px;
+  font-weight: bold;
+  margin-bottom: 15px;
+  text-transform: uppercase;
+}
+
+.footer-column ul {
+  list-style: none;
+}
+
+.footer-column ul li {
+  margin-bottom: 8px;
+  font-size: 16px;
+  line-height: 1.6;
+  cursor: pointer;
+}
+
+.footer-column ul li:hover {
+  text-decoration: underline;
+}
+
+.footer-column p {
+  font-size: 16px;
+  line-height: 1.8;
+  margin-bottom: 8px;
+}
+#toast {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  background-color: #2e7d32;
+  color: #fff;
+  padding: 20px 30px;
+  border-radius: 8px;
+  font-size: 18px;
+  font-weight: 500;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+  z-index: 9999;
+}
+
+#toast.show {
+  opacity: 1;
+}

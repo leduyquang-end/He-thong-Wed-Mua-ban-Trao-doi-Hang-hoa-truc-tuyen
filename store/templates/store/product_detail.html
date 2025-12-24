@@ -1,0 +1,804 @@
+{% load static %} {% load humanize %}
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <title>{{ product.name }} | GIADUNG.VN</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <style>
+      body {
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        min-height: 100vh;
+        font-family: "Segoe UI", sans-serif;
+        padding-top: 100px;
+      }
+      .navbar-glass {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        box-shadow: 0 4px 30px rgba(0, 0, 0, 0.05);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+      }
+      .nav-link {
+        font-weight: 600;
+        color: #555 !important;
+        transition: 0.3s;
+      }
+      .nav-link:hover,
+      .nav-link.active {
+        color: #008c95 !important;
+      }
+      .search-box {
+        position: relative;
+        max-width: 300px;
+        width: 100%;
+      }
+      .search-box input {
+        border-radius: 50px;
+        padding-left: 20px;
+        padding-right: 45px;
+        border: 1px solid #ddd;
+        transition: all 0.3s;
+      }
+      .search-box input:focus {
+        border-color: #008c95;
+        box-shadow: 0 0 0 0.2rem rgba(0, 140, 149, 0.1);
+      }
+      .search-box button {
+        position: absolute;
+        right: 5px;
+        top: 50%;
+        transform: translateY(-50%);
+        border: none;
+        background: none;
+        color: #008c95;
+        padding: 5px 10px;
+      }
+      .detail-card {
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 25px;
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        border: 1px solid white;
+        padding-bottom: 20px;
+      }
+      .product-img-container {
+        background-color: #fff;
+        padding: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+        border-radius: 20px;
+        box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.03);
+      }
+      .product-img-main {
+        max-width: 100%;
+        max-height: 400px;
+        object-fit: contain;
+        transition: 0.5s;
+      }
+      .product-img-main:hover {
+        transform: scale(1.05);
+      }
+      .product-code {
+        font-size: 0.8rem;
+        color: #adb5bd;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        font-weight: 600;
+        margin-bottom: 5px;
+        display: block;
+      }
+      .product-title {
+        font-size: 2rem;
+        font-weight: 800;
+        color: #2d3436;
+        line-height: 1.2;
+      }
+      .price-current {
+        color: #d32f2f;
+        font-size: 2.2rem;
+        font-weight: 800;
+      }
+      .price-old {
+        text-decoration: line-through;
+        color: #95a5a6;
+        font-size: 1.1rem;
+        display: block;
+        margin-top: -5px;
+      }
+      .discount-badge {
+        background: #ff7675;
+        color: white;
+        font-size: 0.9rem;
+        padding: 3px 10px;
+        border-radius: 6px;
+        vertical-align: middle;
+        margin-left: 10px;
+        font-weight: bold;
+        box-shadow: 0 4px 10px rgba(255, 118, 117, 0.4);
+      }
+      .btn-buy {
+        background: linear-gradient(to right, #008c95, #00b4d8);
+        border: none;
+        padding: 15px 30px;
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: white;
+        border-radius: 50px;
+        transition: 0.3s;
+        width: 100%;
+        box-shadow: 0 10px 20px rgba(0, 140, 149, 0.2);
+      }
+      .btn-buy:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 15px 30px rgba(0, 140, 149, 0.4);
+        color: white;
+      }
+      .info-section {
+        padding: 0 30px;
+        margin-top: 20px;
+      }
+      .info-box {
+        background: #fff;
+        border-radius: 15px;
+        padding: 25px;
+        margin-bottom: 20px;
+        border: 1px solid #f1f2f6;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.02);
+      }
+      .info-header {
+        font-weight: 700;
+        color: #2d3436;
+        margin-bottom: 15px;
+        border-bottom: 2px solid #f1f2f6;
+        padding-bottom: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .info-header-left {
+        display: flex;
+        align-items: center;
+      }
+      .rating-summary {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 0.95rem;
+      }
+      .info-header i {
+        color: #008c95;
+        margin-right: 10px;
+        font-size: 1.2rem;
+        background: #e0f7fa;
+        width: 35px;
+        height: 35px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+      }
+      .description-content {
+        font-size: 1rem;
+        line-height: 1.7;
+        color: #636e72;
+        overflow: hidden;
+        display: -webkit-box;
+        -webkit-line-clamp: 10;
+        -webkit-box-orient: vertical;
+        transition: all 0.3s ease;
+      }
+      .description-content.expanded {
+        -webkit-line-clamp: unset;
+      }
+      .btn-expand {
+        color: #008c95;
+        font-weight: 600;
+        cursor: pointer;
+        border: none;
+        background: none;
+        margin-top: 10px;
+        padding: 5px 15px;
+        border-radius: 20px;
+        transition: 0.2s;
+      }
+      .btn-expand:hover {
+        background: #e0f7fa;
+      }
+      .review-item {
+        border-bottom: 1px solid #f1f2f6;
+        padding-bottom: 15px;
+        margin-bottom: 15px;
+      }
+      .review-item:last-child {
+        border-bottom: none;
+        margin-bottom: 0;
+      }
+      .review-user {
+        font-weight: 600;
+        color: #2d3436;
+        font-size: 1rem;
+      }
+      .review-rating {
+        color: #ffc107;
+        font-size: 1rem;
+        margin-left: 8px;
+      }
+      .review-comment {
+        margin-top: 8px;
+        margin-bottom: 5px;
+        color: #636e72;
+        line-height: 1.6;
+      }
+      .review-date {
+        font-size: 0.85rem;
+        color: #95a5a6;
+      }
+      .no-reviews {
+        text-align: center;
+        padding: 40px 20px;
+        color: #95a5a6;
+      }
+      .no-reviews i {
+        font-size: 3rem;
+        margin-bottom: 15px;
+        opacity: 0.5;
+      }
+      .btn-review-new {
+        background: linear-gradient(to right, #008c95, #00b4d8);
+        color: white !important;
+        padding: 8px 18px;
+        border-radius: 50px;
+        font-weight: 600;
+        font-size: 0.85rem;
+        text-decoration: none !important;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 12px rgba(0, 140, 149, 0.2);
+        margin-left: auto;
+      }
+      .btn-review-new:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 15px rgba(0, 140, 149, 0.4);
+        filter: brightness(1.1);
+      }
+      .btn-review-new i {
+        background: none !important;
+        width: auto !important;
+        height: auto !important;
+        color: white !important;
+        margin: 0 !important;
+        font-size: 0.8rem !important;
+      }
+
+      .pagination .page-link {
+          color: #008c95;
+          border: none;
+          background: transparent;
+          font-weight: 600;
+          margin: 0 5px;
+          border-radius: 50%;
+          width: 40px;
+          height: 40px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          transition: 0.3s;
+      }
+      .pagination .page-link:hover {
+          background-color: #e0f7fa;
+          color: #007982;
+      }
+      .pagination .page-item.active .page-link {
+          background-color: #008c95;
+          color: white;
+          box-shadow: 0 4px 10px rgba(0, 140, 149, 0.3);
+      }
+      .pagination .page-item.disabled .page-link {
+          color: #ccc;
+          background: transparent;
+      }
+    .btn-cskh {
+			background-color: #008c95;
+			color: white;
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			
+			height: 60px;
+			min-width: 60px;
+			border-radius: 60px;
+			padding: 0;
+			
+			font-weight: 700;
+			font-size: 1.4rem;
+			transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+			border: 2px solid white;
+			overflow: hidden;
+		}
+
+		.icon-cskh {
+			transition: transform 0.3s ease;
+            flex-shrink: 0; 
+		}
+
+		.text-cskh {
+			max-width: 0;
+			opacity: 0;
+			white-space: nowrap;
+			overflow: hidden;
+			transition: all 0.4s ease;
+			font-size: 1.1rem;
+		}
+
+		.btn-cskh:hover {
+			background-color: #007982;
+
+			width: auto;
+			padding-left: 20px;  
+			padding-right: 30px; 
+			
+			box-shadow: 0 5px 15px rgba(0, 140, 149, 0.4);
+			transform: translateY(-3px);
+            justify-content: flex-start; 
+		}
+
+		.btn-cskh:hover .text-cskh {
+			max-width: 250px;
+			opacity: 1;
+			margin-left: 15px; 
+		}
+
+		.btn-cskh:hover .icon-cskh {
+			transform: scale(1.1);
+		}
+    </style>
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-glass fixed-top py-2">
+      <div class="container">
+        <a
+          class="navbar-brand fw-bold text-uppercase"
+          href="{% url 'home' %}"
+          style="color: #008c95; font-size: 1.4rem"
+        >
+          <i class="fas fa-shopping-bag me-2"></i>GIADUNG.VN
+        </a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <form
+            action="{% url 'search' %}"
+            method="GET"
+            class="search-box mx-auto my-2 my-lg-0"
+          >
+            <input
+              type="text"
+              name="q"
+              class="form-control"
+              placeholder="Tìm sản phẩm..."
+              value="{{ request.GET.q }}"
+            />
+            <button type="submit"><i class="fas fa-search"></i></button>
+          </form>
+          <ul class="navbar-nav align-items-center gap-2">
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'home' %}">Trang chủ</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'cart' %}"
+                ><i class="fas fa-shopping-cart"></i> Giỏ</a
+              >
+            </li>
+            {% if user.is_authenticated %}
+            <li class="nav-item dropdown">
+              <a
+                class="nav-link dropdown-toggle btn btn-light rounded-pill px-3 shadow-sm"
+                href="#"
+                data-bs-toggle="dropdown"
+              >
+                <i class="fas fa-user-circle me-1" style="color: #008c95"></i>
+                {% if user.profile.display_name %}{{ user.profile.display_name
+                }}{% elif user.profile.full_name %}{{ user.profile.full_name
+                }}{% else %}{{ user.username }}{% endif %}
+              </a>
+              <ul
+                class="dropdown-menu dropdown-menu-end border-0 shadow mt-2"
+                style="border-radius: 15px"
+              >
+                <li>
+                  <a class="dropdown-item py-2" href="{% url 'profile' %}"
+                    ><i class="fas fa-id-card me-2 text-muted"></i>Hồ sơ</a
+                  >
+                </li>
+                <li>
+                  <a class="dropdown-item py-2" href="{% url 'order-history' %}"
+                    ><i class="fas fa-box-open me-2 text-muted"></i>Quản lý đơn
+                    hàng</a
+                  >
+                </li>
+                <li><hr class="dropdown-divider" /></li>
+                <li>
+                  <a
+                    class="dropdown-item py-2 text-danger"
+                    href="{% url 'logout' %}"
+                    ><i class="fas fa-sign-out-alt me-2"></i>Đăng xuất</a
+                  >
+                </li>
+              </ul>
+            </li>
+            {% else %}
+            <li class="nav-item">
+              <a
+                class="btn btn-outline-dark rounded-pill px-4"
+                href="{% url 'login' %}"
+                >Đăng nhập</a
+              >
+            </li>
+            {% endif %}
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    {% if messages %}
+    <div
+      class="toast-container position-fixed bottom-0 end-0 p-3"
+      style="z-index: 1100"
+    >
+      {% for message in messages %}
+      <div class="toast align-items-center text-white {% if message.tags == 'success' %}bg-success{% else %}bg-warning{% endif %} border-0 show" role="alert">
+        <div class="d-flex">
+          <div class="toast-body">
+            {% if message.tags == 'success' %}
+                <i class="fas fa-check-circle me-2"></i>
+            {% else %}
+                <i class="fas fa-exclamation-triangle me-2"></i>
+            {% endif %}
+            {{ message }}
+          </div>
+          <button
+            type="button"
+            class="btn-close btn-close-white me-2 m-auto"
+            data-bs-dismiss="toast"
+          ></button>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        var toastElList = [].slice.call(document.querySelectorAll(".toast"));
+        var toastList = toastElList.map(function (toastEl) {
+          return new bootstrap.Toast(toastEl, { delay: 3000 });
+        });
+        toastList.forEach((toast) => toast.show());
+      });
+    </script>
+    {% endif %}
+
+    <div class="container pb-5">
+      <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item">
+            <a href="{% url 'home' %}" class="text-decoration-none text-muted"
+              >Trang chủ</a
+            >
+          </li>
+          <li class="breadcrumb-item active text-dark fw-bold">
+            {{ product.name }}
+          </li>
+        </ol>
+      </nav>
+
+      <div class="card detail-card border-0">
+        <div class="row g-0 p-4">
+          <div class="col-lg-5 mb-4 mb-lg-0">
+            <div class="product-img-container h-100">
+              {% if product.image %}
+              <img
+                src="{{ product.image.url }}"
+                class="product-img-main"
+                alt="{{ product.name }}"
+              />
+              {% else %}
+              <img
+                src="{% static 'store/images/no-image.png' %}"
+                class="product-img-main"
+                alt="No Image"
+              />
+              {% endif %}
+            </div>
+          </div>
+          <div
+            class="col-lg-7 ps-lg-5 d-flex flex-column justify-content-center"
+          >
+            <span class="product-code"
+              ><i class="fas fa-hashtag"></i> {{ product.product_code }}</span
+            >
+            <h1 class="product-title mb-3">{{ product.name }}</h1>
+            <div class="mb-4">
+              {% if product.is_on_sale %}
+              <div class="d-flex align-items-center">
+                <span class="price-current"
+                  >{{ product.current_price|intcomma }}₫</span
+                >
+                <span class="discount-badge"
+                  >-{{ product.discount_percent }}% GIẢM</span
+                >
+              </div>
+              <span class="price-old">{{ product.price|intcomma }}₫</span>
+              {% if product.discount_end_date %}
+              <div
+                class="mt-2 text-danger fw-bold small bg-danger-subtle d-inline-block px-2 py-1 rounded"
+              >
+                <i class="fas fa-clock me-1"></i> Kết thúc: {{ product.discount_end_date|date:"d/m/Y H:i" }}
+              </div>
+              {% endif %} {% else %}
+              <span class="price-current">{{ product.price|intcomma }}₫</span>
+              {% endif %}
+            </div>
+            <div class="mt-2">
+              <a
+                href="{% url 'add-to-cart' product.id %}"
+                class="btn btn-buy shadow-lg"
+              >
+                <div class="d-flex align-items-center justify-content-center">
+                  <i class="fas fa-cart-plus fa-lg me-3"></i>
+                  <div class="text-start">
+                    <div style="line-height: 1">THÊM VÀO GIỎ</div>
+                    <small style="font-weight: 400; font-size: 0.8rem"
+                      >Giao hàng tận nơi - Miễn phí vận chuyển</small
+                    >
+                  </div>
+                </div>
+              </a>
+            </div>
+            <div class="row mt-4 g-2 text-muted small">
+              <div class="col-6">
+                <i class="fas fa-check-circle text-success me-1"></i> Chính hãng
+                100%
+              </div>
+              <div class="col-6">
+                <i class="fas fa-undo text-success me-1"></i> Đổi trả 7 ngày
+              </div>
+              <div class="col-6">
+                <i class="fas fa-shield-alt text-success me-1"></i> Bảo hành 12
+                tháng
+              </div>
+              <div class="col-6">
+                <i class="fas fa-truck text-success me-1"></i> Giao siêu tốc 2h
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <hr class="mx-4 text-muted opacity-25" />
+
+        <div class="info-section">
+          <div class="row">
+            <div class="col-12">
+              <div class="info-box">
+                <div class="info-header">
+                  <i class="fas fa-cogs"></i>Thông số kỹ thuật
+                </div>
+                <div class="row g-3">
+                  <div
+                    class="col-md-6 d-flex justify-content-between border-bottom pb-2"
+                  >
+                    <span class="text-secondary">Loại sản phẩm</span>
+                    <span class="fw-bold">{{ product.category }}</span>
+                  </div>
+                  <div
+                    class="col-md-6 d-flex justify-content-between border-bottom pb-2"
+                  >
+                    <span class="text-secondary">Thương hiệu</span>
+                    <span class="fw-bold"
+                      >{{ product.brand|default:"Đang cập nhật" }}</span
+                    >
+                  </div>
+                  <div
+                    class="col-md-6 d-flex justify-content-between border-bottom pb-2"
+                  >
+                    <span class="text-secondary">Dòng sản phẩm</span>
+                    <span class="fw-bold"
+                      >{{ product.product_series|default:"-" }}</span
+                    >
+                  </div>
+                  <div
+                    class="col-md-6 d-flex justify-content-between border-bottom pb-2"
+                  >
+                    <span class="text-secondary">Năm ra mắt</span>
+                    <span class="fw-bold"
+                      >{{ product.release_year|default:"-" }}</span
+                    >
+                  </div>
+                  <div
+                    class="col-12 d-flex justify-content-between border-bottom pb-2"
+                  >
+                    <span class="text-secondary"
+                      >Kích thước (Dài x Rộng x Cao)</span
+                    >
+                    <span class="fw-bold"
+                      >{{ product.dimensions|default:"Đang cập nhật" }}</span
+                    >
+                  </div>
+                </div>
+              </div>
+
+              <div class="info-box">
+                <div class="info-header">
+                  <i class="fas fa-align-left"></i>Mô tả chi tiết
+                </div>
+                <div class="description-content" id="descContent">
+                  {{ product.description|linebreaks }}
+                </div>
+                <div class="text-center mt-2">
+                  <button
+                    class="btn-expand"
+                    onclick="toggleDescription()"
+                    id="btnExpand"
+                  >
+                    Xem thêm nội dung <i class="fas fa-chevron-down ms-1"></i>
+                  </button>
+                </div>
+              </div>
+
+              <div class="info-box">
+                <div class="info-header">
+                  <div class="d-flex align-items-center gap-3">
+                    <div class="info-header-left">
+                      <i class="fas fa-star text-warning"></i>
+                      <span>Đánh giá khách hàng</span>
+                    </div>
+
+                    <div
+                      class="d-flex align-items-center gap-2 border-start ps-3"
+                    >
+                      <span
+                        class="fw-bold text-dark"
+                        style="font-size: 1.2rem;"
+                      >
+                        {{ product.average_rating|floatformat:1 }}
+                      </span>
+                      <span class="text-warning">
+                        {% if product.average_rating >= 4.75 %} ★★★★★
+                        {% elif product.average_rating >= 3.75 %} ★★★★☆
+                        {% elif product.average_rating >= 2.75 %} ★★★☆☆
+                        {% elif product.average_rating >= 1.75 %} ★★☆☆☆
+                        {% elif product.average_rating > 0 %} ★☆☆☆☆
+                        {% else %} ☆☆☆☆☆ {% endif %}
+                      </span>
+                      <span class="text-muted small"
+                        >({{ product.review_count }} đánh giá)</span
+                      >
+                    </div>
+                  </div>
+
+                  <a href="{% url 'review' product.pk %}" class="btn-review-new">
+                    <i class="fas fa-pen-alt"></i> Viết đánh giá
+                  </a>
+                </div>
+
+                {% for review in reviews %}
+                <div class="review-item">
+                  <div class="d-flex align-items-center">
+                    <span class="review-user">{{ review.user.username }}</span>
+                    <span class="review-rating">
+                      {% if review.rating == 1 %}
+                      <span class="text-warning">★☆☆☆☆</span>
+                      {% elif review.rating == 2 %}
+                      <span class="text-warning">★★☆☆☆</span>
+                      {% elif review.rating == 3 %}
+                      <span class="text-warning">★★★☆☆</span>
+                      {% elif review.rating == 4 %}
+                      <span class="text-warning">★★★★☆</span>
+                      {% elif review.rating == 5 %}
+                      <span class="text-warning">★★★★★</span>
+                      {% else %}
+                      <span class="text-muted">☆☆☆☆☆</span>
+                      {% endif %}
+                    </span>
+                  </div>
+                  <p class="review-comment">{{ review.comment }}</p>
+                  <small class="review-date"
+                    >{{ review.created_at|date:"d/m/Y H:i" }}</small
+                  >
+                </div>
+                {% empty %}
+                <div class="no-reviews">
+                  <i class="far fa-comments"></i>
+                  <h5 class="text-muted">Chưa có đánh giá nào</h5>
+                  <p class="text-muted small">
+                    Hãy là người đầu tiên nhận xét về sản phẩm này!
+                  </p>
+                </div>
+                {% endfor %}
+
+                {% if reviews.has_other_pages %}
+                <nav aria-label="Review pagination" class="mt-4 border-top pt-3">
+                  <ul class="pagination justify-content-center mb-0">
+                    
+                    {% if reviews.has_previous %}
+                      <li class="page-item">
+                        <a class="page-link" href="?page={{ reviews.previous_page_number }}" aria-label="Previous">
+                          <span aria-hidden="true">&laquo;</span>
+                        </a>
+                      </li>
+                    {% else %}
+                      <li class="page-item disabled">
+                        <span class="page-link">&laquo;</span>
+                      </li>
+                    {% endif %}
+
+                    {% for i in reviews.paginator.page_range %}
+                      {% if reviews.number == i %}
+                        <li class="page-item active"><span class="page-link">{{ i }}</span></li>
+                      {% else %}
+                        <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+                      {% endif %}
+                    {% endfor %}
+
+                    {% if reviews.has_next %}
+                      <li class="page-item">
+                        <a class="page-link" href="?page={{ reviews.next_page_number }}" aria-label="Next">
+                          <span aria-hidden="true">&raquo;</span>
+                        </a>
+                      </li>
+                    {% else %}
+                      <li class="page-item disabled">
+                        <span class="page-link">&raquo;</span>
+                      </li>
+                    {% endif %}
+                  </ul>
+                </nav>
+                {% endif %}
+                </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  	<div class="fixed-bottom p-4" style="z-index: 1000; pointer-events: none">
+	    <div class="text-end" style="pointer-events: auto">
+	        <a href="{% url 'customer_support' %}" class="btn-cskh shadow-lg text-decoration-none">
+	            <i class="fas fa-headset icon-cskh"></i>
+	            <span class="text-cskh">Liên hệ chúng tôi</span>
+	        </a>
+ 	   </div>
+	</div>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+      function toggleDescription() {
+        var content = document.getElementById("descContent");
+        var btn = document.getElementById("btnExpand");
+        content.classList.toggle("expanded");
+        if (content.classList.contains("expanded")) {
+          btn.innerHTML = 'Thu gọn <i class="fas fa-chevron-up ms-1"></i>';
+        } else {
+          btn.innerHTML =
+            'Xem thêm nội dung <i class="fas fa-chevron-down ms-1"></i>';
+        }
+      }
+    </script>
+  </body>
+</html>
